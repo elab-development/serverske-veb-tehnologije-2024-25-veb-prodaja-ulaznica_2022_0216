@@ -86,4 +86,17 @@ class DogadjajKontroler extends Controller
         $dogadjaj->delete();
         return response()->noContent();
     }
+
+    public function pretragaPoGradu(?string $grad = null, Request $request)
+{
+    $upit = \App\Models\Dogadjaj::with('mesto')->orderBy('datum_pocetka');
+
+    if ($grad) {
+        $upit->whereHas('mesto', fn($q) => $q->where('grad','like',"%{$grad}%"));
+    }
+
+    return response()->json(
+        $upit->paginate($request->query('po_strani',15))
+    );
+}
 }

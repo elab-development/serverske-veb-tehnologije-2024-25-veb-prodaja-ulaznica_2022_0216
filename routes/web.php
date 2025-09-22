@@ -13,19 +13,28 @@ Route::middleware('api')->prefix('api/v1')->withoutMiddleware([HandleAppearance:
     // test
     Route::get('/proba', fn () => response()->json(['ok' => true]));
 
-    // Mesta
-    Route::get   ('/mesta',                 [MestoKontroler::class, 'index']);
-    Route::post  ('/mesta',                 [MestoKontroler::class, 'store']);
-    Route::get   ('/mesta/{mesto}',         [MestoKontroler::class, 'show']);
-    Route::match (['put','patch'],'/mesta/{mesto}', [MestoKontroler::class, 'update']);
-    Route::delete('/mesta/{mesto}',         [MestoKontroler::class, 'destroy']);
+    // Mesta - resource ruta
+   Route::apiResource('mesta', MestoKontroler::class);
+    //Redirektovanje - tip 3
+   Route::redirect('/pocetna', '/api/v1/mesta');
 
-    // Događaji
-    Route::get   ('/dogadjaji',                 [DogadjajKontroler::class, 'index']);
-    Route::post  ('/dogadjaji',                 [DogadjajKontroler::class, 'store']);
-    Route::get   ('/dogadjaji/{dogadjaj}',      [DogadjajKontroler::class, 'show']);
-    Route::match (['put','patch'],'/dogadjaji/{dogadjaj}', [DogadjajKontroler::class, 'update']);
-    Route::delete('/dogadjaji/{dogadjaj}',      [DogadjajKontroler::class, 'destory']);
+    // Događaji - rute grupisane preko Route::controller
+    Route::controller(DogadjajKontroler::class)->group(function () {
+        Route::get   ('/dogadjaji',                'index');
+        Route::post  ('/dogadjaji',                'store');
+        Route::get   ('/dogadjaji/{dogadjaj}',     'show');
+        Route::match (['put','patch'], '/dogadjaji/{dogadjaj}', 'update');
+        Route::delete('/dogadjaji/{dogadjaj}',     'destroy');
+
+        // NESTED (već imaš) – lista ulaznica za događaj
+        Route::get('/dogadjaji/{dogadjaj}/ulaznice', [UlaznicaKontroler::class, 'spisakZaDogadjaj']);
+    });
+
+    //parametrizovana ruta sa constraint-om
+    Route::get('/pretraga/dogadjaji/{grad?}', [DogadjajKontroler::class, 'pretragaPoGradu'])
+     ->whereAlpha('grad')
+     ->name('dogadjaji.pretraga');
+
 
     // Ulaznice
     Route::get   ('/ulaznice',                 [UlaznicaKontroler::class, 'index']);
@@ -34,8 +43,7 @@ Route::middleware('api')->prefix('api/v1')->withoutMiddleware([HandleAppearance:
     Route::match (['put','patch'],'/ulaznice/{ulaznica}', [UlaznicaKontroler::class, 'update']);
     Route::delete('/ulaznice/{ulaznica}',      [UlaznicaKontroler::class, 'destoy']);
 
-    // Ugnježdeno
-    Route::get('/dogadjaji/{dogadjaj}/ulaznice', [UlaznicaKontroler::class, 'spisakZaDogadjaj']);
+   
 
     // Kupovine
     Route::get   ('/kupovine',                [KupovinaKontroler::class, 'index']);
@@ -45,4 +53,9 @@ Route::middleware('api')->prefix('api/v1')->withoutMiddleware([HandleAppearance:
     Route::delete('/kupovine/{kupovina}',     [KupovinaKontroler::class, 'destroy']);
     Route::post  ('/kupovine/{kupovina}/ulaznice', [KupovinaKontroler::class, 'dodeliUlaznice']);
     Route::get   ('/kupovine/{kupovina}/ulaznice', [KupovinaKontroler::class, 'spisakUlaznica']);
+
+    //tip rute 4
+    Route::fallback(fn() => response()->json([
+        'message' => 'Ruta nije pronađena.'
+    ], 404));
 });
