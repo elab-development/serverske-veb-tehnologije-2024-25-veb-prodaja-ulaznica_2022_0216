@@ -69,6 +69,13 @@ Route::prefix('api/v1')
             Route::post  ('/kupovine/{kupovina}/ulaznice',  [KupovinaKontroler::class, 'dodeliUlaznice']);
         });
 
-        // Fallback za nepostojeće API rute
-        Route::fallback(fn() => response()->json(['message' => 'Ruta nije pronađena.'], 404));
+        Route::fallback(function () {
+            return response()->json([
+                'ok' => false,
+                'error' => [
+                    'type' => 'not_found',
+                    'message' => 'Resource not found.'
+                ],
+            ], 404);
+        });
     });
