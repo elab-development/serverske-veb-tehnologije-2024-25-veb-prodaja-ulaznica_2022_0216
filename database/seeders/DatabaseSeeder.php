@@ -9,9 +9,12 @@ use App\Models\Mesto;
 use App\Models\Dogadjaj;
 use App\Models\Kupovina;
 use App\Models\Ulaznica;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
+
     public function run(): void
     {
         // 1) MESTA (≥5)
@@ -105,6 +108,19 @@ class DatabaseSeeder extends Seeder
             ['dogadjaj_id' => $d('Zoster Live'),                      'tip' => 'Parter',  'cena' => 2400, 'sediste' => null,   'status' => 'rezervisana','kupovina_id' => $k(4)],
             ['dogadjaj_id' => $d('Zoster Live'),                      'tip' => 'VIP',     'cena' => 4200, 'sediste' => 'V-05', 'status' => 'prodata',   'kupovina_id' => $k(5)],
         ];
+
+            $users = collect([
+            ['name' => 'Ana Anić',        'email' => 'ana@example.com'],
+            ['name' => 'Marko Marković',  'email' => 'marko@example.com'],
+            ['name' => 'Ivana Ivanović',  'email' => 'ivana@example.com'],
+            ['name' => 'Milan Milić',     'email' => 'milan@example.com'],
+            ['name' => 'Sofija Simić',    'email' => 'sofia@example.com'],
+        ])->map(fn ($u) => User::create([
+            'name'              => $u['name'],
+            'email'             => $u['email'],
+            'password'          => Hash::make('lozinka123'), // zajednička demo lozinka
+            'email_verified_at' => now(),                    // opcionalno
+    ]));
 
         foreach ($ulaznicePodaci as $row) {
             Ulaznica::create($row + ['kod' => $this->unikatanKod()]);
