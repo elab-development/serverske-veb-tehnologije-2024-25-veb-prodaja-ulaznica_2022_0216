@@ -10,10 +10,9 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthKontroler extends Controller
 {
-    /** Spoji sve potencijalne izvore ulaza (JSON + form + query) */
-    private function payload(Request $request): array
+        private function payload(Request $request): array
     {
-        // Laravel obično popuni all() i za JSON, ali ako je prazno, probaj ručno da dekodiraš raw body
+        
         $data = $request->all();
         if (empty($data)) {
             $raw = json_decode($request->getContent() ?? '', true);

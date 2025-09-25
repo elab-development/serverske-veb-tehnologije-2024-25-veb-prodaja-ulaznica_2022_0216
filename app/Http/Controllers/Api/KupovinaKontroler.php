@@ -91,8 +91,7 @@ class KupovinaKontroler extends Controller
         return response()->noContent();
     }
 
-    /** POST /kupovine/{kupovina}/ulaznice  (dodela dostupnih ulaznica kupovini) */
-    public function dodeliUlaznice(Request $request, Kupovina $kupovina)
+        public function dodeliUlaznice(Request $request, Kupovina $kupovina)
     {
         $podaci = $request->validate([
             'ulaznice_id' => ['required','array','min:1'],
@@ -137,7 +136,7 @@ class KupovinaKontroler extends Controller
         ], 200);
     }
 
-    /** GET /kupovine/{kupovina}/ulaznice */
+   
     public function spisakUlaznica(Kupovina $kupovina)
     {
         return response()->json($kupovina->ulaznice()->orderBy('id')->get());

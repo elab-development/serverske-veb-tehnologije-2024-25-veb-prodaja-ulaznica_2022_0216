@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        // 1) MESTA (≥5)
+        // MESTA
         $mesta = collect([
             ['naziv' => 'Dom omladine',       'adresa' => 'Cetinjska 15',               'grad' => 'Beograd', 'kapacitet' => 2000],
             ['naziv' => 'Beogradska Arena',   'adresa' => 'Bulevar A. Čarnojevića 58',  'grad' => 'Beograd', 'kapacitet' => 18000],
@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
         // helper za brzo uzimanje ID-ja
         $m = fn(string $naziv) => $mesta->firstWhere('naziv', $naziv)->id;
 
-        // 2) DOGAĐAJI (≥5)
+        // DOGAĐAJI 
         $dogadjaji = collect([
             [
                 'naziv' => 'Bajaga i Instruktori - Unplugged',
@@ -70,7 +70,7 @@ class DatabaseSeeder extends Seeder
 
         $d = fn(string $naziv) => $dogadjaji->firstWhere('naziv', $naziv)->id;
 
-        // 3) KUPOVINE (≥5) — guest checkout (email), različita stanja
+        // KUPOVINE
         $kupovine = collect([
             ['broj_porudzbine' => $this->ord(), 'email' => 'ana@example.com',   'ukupno' => 0, 'valuta' => 'RSD', 'nacin_placanja' => 'kartica', 'stanje' => 'novo'],
             ['broj_porudzbine' => $this->ord(), 'email' => 'marko@example.com', 'ukupno' => 0, 'valuta' => 'RSD', 'nacin_placanja' => 'kartica', 'stanje' => 'novo'],
@@ -81,29 +81,29 @@ class DatabaseSeeder extends Seeder
 
         $k = fn(int $idx) => $kupovine[$idx - 1]->id; // $k(1) → id prve kupovine
 
-        // 4) ULAZNICE (≥5) — napravićemo 15 komada (3 po događaju)
+        // ULAZNICE 
         $ulaznicePodaci = [
-            // Bajaga (3)
+            
             ['dogadjaj_id' => $d('Bajaga i Instruktori - Unplugged'), 'tip' => 'VIP',     'cena' => 4500, 'sediste' => 'B-12', 'status' => 'dostupna',  'kupovina_id' => null],
             ['dogadjaj_id' => $d('Bajaga i Instruktori - Unplugged'), 'tip' => 'Parter',  'cena' => 2500, 'sediste' => 'P-45', 'status' => 'rezervisana','kupovina_id' => $k(1)],
             ['dogadjaj_id' => $d('Bajaga i Instruktori - Unplugged'), 'tip' => 'Parter',  'cena' => 2500, 'sediste' => 'P-46', 'status' => 'prodata',   'kupovina_id' => $k(2)],
 
-            // Čola (3)
+            
             ['dogadjaj_id' => $d('Zdravko Čolić - 50 godina'),        'tip' => 'VIP',     'cena' => 6000, 'sediste' => 'A-01', 'status' => 'dostupna',  'kupovina_id' => null],
             ['dogadjaj_id' => $d('Zdravko Čolić - 50 godina'),        'tip' => 'Parter',  'cena' => 3200, 'sediste' => 'P-10', 'status' => 'rezervisana','kupovina_id' => $k(3)],
             ['dogadjaj_id' => $d('Zdravko Čolić - 50 godina'),        'tip' => 'Tribina', 'cena' => 2800, 'sediste' => 'T-20', 'status' => 'prodata',   'kupovina_id' => $k(4)],
 
-            // Parni Valjak (3)
+            
             ['dogadjaj_id' => $d('Parni Valjak - Akustik'),           'tip' => 'VIP',     'cena' => 5000, 'sediste' => 'B-01', 'status' => 'dostupna',  'kupovina_id' => null],
             ['dogadjaj_id' => $d('Parni Valjak - Akustik'),           'tip' => 'Parter',  'cena' => 2600, 'sediste' => 'P-30', 'status' => 'rezervisana','kupovina_id' => $k(5)],
             ['dogadjaj_id' => $d('Parni Valjak - Akustik'),           'tip' => 'Parter',  'cena' => 2600, 'sediste' => 'P-31', 'status' => 'prodata',   'kupovina_id' => $k(1)],
 
-            // Stand-up (3)
+            
             ['dogadjaj_id' => $d('Stand-up Veče'),                    'tip' => 'Parter',  'cena' => 1800, 'sediste' => null,   'status' => 'dostupna',  'kupovina_id' => null],
             ['dogadjaj_id' => $d('Stand-up Veče'),                    'tip' => 'Parter',  'cena' => 1800, 'sediste' => null,   'status' => 'rezervisana','kupovina_id' => $k(2)],
             ['dogadjaj_id' => $d('Stand-up Veče'),                    'tip' => 'Parter',  'cena' => 1800, 'sediste' => null,   'status' => 'prodata',   'kupovina_id' => $k(3)],
 
-            // Zoster (3)
+            
             ['dogadjaj_id' => $d('Zoster Live'),                      'tip' => 'Parter',  'cena' => 2400, 'sediste' => null,   'status' => 'dostupna',  'kupovina_id' => null],
             ['dogadjaj_id' => $d('Zoster Live'),                      'tip' => 'Parter',  'cena' => 2400, 'sediste' => null,   'status' => 'rezervisana','kupovina_id' => $k(4)],
             ['dogadjaj_id' => $d('Zoster Live'),                      'tip' => 'VIP',     'cena' => 4200, 'sediste' => 'V-05', 'status' => 'prodata',   'kupovina_id' => $k(5)],
@@ -119,7 +119,7 @@ class DatabaseSeeder extends Seeder
             'name'              => $u['name'],
             'email'             => $u['email'],
             'password'          => Hash::make('lozinka123'), // zajednička demo lozinka
-            'email_verified_at' => now(),                    // opcionalno
+            'email_verified_at' => now(),                   
     ]));
 
         foreach ($ulaznicePodaci as $row) {

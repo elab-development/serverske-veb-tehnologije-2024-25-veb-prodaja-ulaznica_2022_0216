@@ -9,24 +9,12 @@ use App\Http\Controllers\Api\DogadjajKontroler;
 use App\Http\Controllers\Api\UlaznicaKontroler;
 use App\Http\Controllers\Api\KupovinaKontroler;
 
-// ===== API (sve pod /api/v1), bez CSRF-a =====
 Route::prefix('api/v1')
     ->withoutMiddleware([VerifyCsrfToken::class])
     ->group(function () {
 
-        // Health
-        Route::get('/ping', fn() => response()->json(['ok' => true]));
 
-        // Debug echo – za proveru šta Laravel prima
-        Route::post('/_debug/echo', function (\Illuminate\Http\Request $request) {
-            return response()->json([
-                'method'  => $request->method(),
-                'raw'     => $request->getContent(),
-                'parsed'  => $request->all(),
-            ]);
-        });
-
-        // ---------- AUTH ----------
+        // Auth
         Route::post('/auth/register', [AuthKontroler::class, 'register']);
         Route::post('/auth/login',    [AuthKontroler::class, 'login']);
         Route::middleware('auth:sanctum')->group(function () {
@@ -34,46 +22,46 @@ Route::prefix('api/v1')
             Route::post('/auth/logout', [AuthKontroler::class, 'logout']);
         });
 
-        // ---------- MESTA ----------
-        // Javno: čitanje
+        // Mesta
+        // Javno - citanje
         Route::apiResource('mesta', MestoKontroler::class)->only(['index','show']);
-        // Zaštićeno: upis/izmena/brisanje
+        // Zasticeno - upis/izmena/brisanje
         Route::middleware('auth:sanctum')->group(function () {
             Route::apiResource('mesta', MestoKontroler::class)->only(['store','update','destroy']);
         });
 
-        // ---------- DOGAĐAJI ----------
-        // Javno: čitanje
+        // Dogadj
+        // Javno - citanje
         Route::get   ('/dogadjaji',                        [DogadjajKontroler::class, 'index']);
         Route::get   ('/dogadjaji/{dogadjaj}',             [DogadjajKontroler::class, 'show']);
         Route::get   ('/dogadjaji/{dogadjaj}/ulaznice',    [UlaznicaKontroler::class, 'spisakZaDogadjaj']);
         Route::get('/pretraga/dogadjaji/{grad?}', [DogadjajKontroler::class, 'pretragaPoGradu'])
             ->whereAlpha('grad')
             ->name('dogadjaji.pretraga');
-        // Zaštićeno: upis/izmena/brisanje
+        // Zasticeno - upis/izmena/brisanje
         Route::middleware('auth:sanctum')->group(function () {
             Route::post  ('/dogadjaji',                        [DogadjajKontroler::class, 'store']);
             Route::match (['put','patch'], '/dogadjaji/{dogadjaj}', [DogadjajKontroler::class, 'update']);
             Route::delete('/dogadjaji/{dogadjaj}',             [DogadjajKontroler::class, 'destroy']);
         });
 
-        // ---------- ULAZNICE ----------
-        // Javno: čitanje
+        // ulaznice
+        // Javno - citanje
         Route::get   ('/ulaznice',                 [UlaznicaKontroler::class, 'index']);
         Route::get   ('/ulaznice/{ulaznica}',      [UlaznicaKontroler::class, 'show']);
-        // Zaštićeno: upis/izmena/brisanje
+        // Zasticeno - upis/izmena/brisanje
         Route::middleware('auth:sanctum')->group(function () {
             Route::post  ('/ulaznice',                 [UlaznicaKontroler::class, 'store']);
             Route::match (['put','patch'], '/ulaznice/{ulaznica}', [UlaznicaKontroler::class, 'update']);
             Route::delete('/ulaznice/{ulaznica}',      [UlaznicaKontroler::class, 'destroy']);
         });
 
-        // ---------- KUPOVINE ----------
-        // Javno: čitanje (ako želiš da bude javno; možeš i ovo da zaključaš)
+        // kupovine
+        // Javno - citanje
         Route::get   ('/kupovine',                      [KupovinaKontroler::class, 'index']);
         Route::get   ('/kupovine/{kupovina}',           [KupovinaKontroler::class, 'show']);
         Route::get   ('/kupovine/{kupovina}/ulaznice',  [KupovinaKontroler::class, 'spisakUlaznica']);
-        // Zaštićeno: upis/izmena/brisanje i dodela
+        // Zasticeno - upis/izmena/brisanje
         Route::middleware('auth:sanctum')->group(function () {
             Route::post  ('/kupovine',                      [KupovinaKontroler::class, 'store']);
             Route::match (['put','patch'], '/kupovine/{kupovina}', [KupovinaKontroler::class, 'update']);
