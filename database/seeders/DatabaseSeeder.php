@@ -109,7 +109,7 @@ class DatabaseSeeder extends Seeder
             ['dogadjaj_id' => $d('Zoster Live'),                      'tip' => 'VIP',     'cena' => 4200, 'sediste' => 'V-05', 'status' => 'prodata',   'kupovina_id' => $k(5)],
         ];
 
-            $users = collect([
+        $users = collect([
             ['name' => 'Ana Anić',        'email' => 'ana@example.com'],
             ['name' => 'Marko Marković',  'email' => 'marko@example.com'],
             ['name' => 'Ivana Ivanović',  'email' => 'ivana@example.com'],
@@ -120,7 +120,7 @@ class DatabaseSeeder extends Seeder
             'email'             => $u['email'],
             'password'          => Hash::make('lozinka123'), // zajednička demo lozinka
             'email_verified_at' => now(),                   
-    ]));
+        ]));
 
         foreach ($ulaznicePodaci as $row) {
             Ulaznica::create($row + ['kod' => $this->unikatanKod()]);
